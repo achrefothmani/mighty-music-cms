@@ -1,103 +1,104 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect } from "react";
+import StatCard from "@/components/StatCard";
+import { getArtists } from "@/services/artists.service";
+import { Artist } from "@/lib/types";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import Link from "next/link";
+
+export default function Dashboard() {
+  const [artists, setArtists] = useState<Artist[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getArtists();
+        setArtists(data);
+      } catch (e) {
+        console.error("Failed to fetch dashboard data", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const genreCounts = artists.reduce((acc: Record<string, number>, artist) => {
+    const genre = artist.genre.toUpperCase();
+    acc[genre] = (acc[genre] || 0) + 1;
+    return acc;
+  }, {});
+
+  const genreData = Object.entries(genreCounts)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="stagger-in space-y-8">
+      {/* KPI Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard label="TOTAL ARTISTS" value={isLoading ? "..." : artists.length} delta={isLoading ? "" : "LIVE"} />
+        <StatCard label="TOTAL TRACKS" value="-" delta="PENDING" />
+        <StatCard label="WEBSITE VIEWS" value="24.8K" delta="18%" />
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Chart Section */}
+        <div className="card-brutalist flex flex-col">
+          <h3 className="text-xs font-mono tracking-[0.2em] mb-8 text-muted-foreground uppercase">
+            GENRE DISTRIBUTION
+          </h3>
+          <div className="h-[300px] w-full">
+            {isLoading ? (
+              <div className="h-full w-full flex items-center justify-center font-mono text-[10px] text-muted-foreground">LOADING DATA...</div>
+            ) : genreData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={genreData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1A1A1A" vertical={false} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#555555" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    fontFamily="var(--font-space-mono)"
+                  />
+                  <YAxis 
+                    stroke="#555555" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    fontFamily="var(--font-space-mono)"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "#111111", border: "1px solid #1A1A1A", borderRadius: 0 }}
+                    itemStyle={{ color: "#F5F0E8", fontSize: "10px", fontFamily: "var(--font-space-mono)" }}
+                  />
+                  <Bar dataKey="count" fill="#e11d48" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full w-full flex items-center justify-center font-mono text-[10px] text-muted-foreground">NO DATA AVAILABLE</div>
+            )}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Recent Activity Section */}
+        <div className="card-brutalist flex flex-col">
+          <h3 className="text-xs font-mono tracking-[0.2em] mb-8 text-muted-foreground uppercase">
+            RECENT ACTIVITY
+          </h3>
+          <div className="space-y-4">
+             <div className="flex items-center justify-center h-full font-mono text-[10px] text-muted-foreground uppercase">
+               Integration in progress...
+             </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }
