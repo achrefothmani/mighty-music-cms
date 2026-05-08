@@ -6,6 +6,7 @@ import {
   LayoutDashboard, 
   Mic2, 
   Music, 
+  Disc,
   Calendar, 
   Video, 
   Newspaper, 
@@ -27,7 +28,8 @@ function cn(...inputs: ClassValue[]) {
 const NAV_ITEMS = [
   { label: "COMMAND CENTER", href: "/", icon: LayoutDashboard },
   { label: "ARTISTS", href: "/artists", icon: Mic2 },
-  { label: "MUSIC", href: "/music", icon: Music },
+  { label: "SINGLE", href: "/music", icon: Music },
+  { label: "ALBUMS", href: "/albums", icon: Disc },
   { label: "EVENTS", href: "/events", icon: Calendar },
   { label: "VIDEOS", href: "/videos", icon: Video },
   { label: "NEWS", href: "/news", icon: Newspaper },

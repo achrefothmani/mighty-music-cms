@@ -1,100 +1,121 @@
 "use client";
 
-import { useState } from "react";
-import { MOCK_EVENTS } from "@/lib/mock-data";
+import { useState, useEffect } from "react";
+import { getEvents, deleteEvent } from "@/services/events.service";
 import { Event } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
-import DrawerForm from "@/components/DrawerForm";
 import EmptyState from "@/components/EmptyState";
-import { MapPin, Calendar } from "lucide-react";
+import { Search, Trash2, Edit, Plus, Calendar, MapPin } from "lucide-react";
+import Link from "next/link";
+import { getMediaUrl } from "@/lib/utils";
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<Event[]>(MOCK_EVENTS);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const data = await getEvents();
+      setEvents(data);
+    } catch (error) {
+      console.error("Failed to fetch events:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("ARE YOU SURE YOU WANT TO DELETE THIS EVENT?")) return;
+    try {
+      await deleteEvent(id);
+      setEvents(events.filter(e => e.id !== id));
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+    }
+  };
+
+  const filtered = events.filter(e => 
+    e.title.toLowerCase().includes(search.toLowerCase()) ||
+    e.location.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="stagger-in space-y-12">
-      {events.length > 0 ? (
-        <div className="space-y-12 relative before:absolute before:left-[35px] before:top-0 before:bottom-0 before:w-px before:bg-border">
-          {events.map((event) => {
-            const { day, month } = formatDate(event.date_time);
-            return (
-              <div key={event.id} className="flex gap-12 group relative">
-                {/* Date Block */}
-                <div className="flex flex-col items-center justify-center w-[72px] h-[72px] bg-card border border-border group-hover:border-accent transition-colors z-10 bg-background">
-                  <span className="text-2xl font-bold leading-none">{day}</span>
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase">{month}</span>
-                </div>
+    <div className="stagger-in space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+          <input 
+            type="text" 
+            placeholder="SEARCH EVENTS..." 
+            className="w-full bg-transparent pl-8 py-2 font-mono text-xs tracking-widest outline-none uppercase placeholder:text-muted-foreground"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <Link 
+          href="/events/new"
+          className="btn-brutalist flex items-center justify-center gap-2 px-6 py-2 bg-accent text-accent-foreground font-mono text-xs tracking-widest hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+        >
+          <Plus size={16} />
+          ADD EVENT
+        </Link>
+      </div>
 
-                {/* Content Block */}
-                <div 
-                  className="flex-1 card-brutalist group-hover:border-accent cursor-pointer transition-all flex gap-8 items-start"
-                  onClick={() => {
-                    setSelectedEvent(event);
-                    setIsDrawerOpen(true);
-                  }}
-                >
-                  <div className="flex-1 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono border border-border px-2 py-0.5 text-muted-foreground group-hover:text-accent group-hover:border-accent transition-colors flex items-center gap-1">
-                        <MapPin size={10} /> {event.location}
-                      </span>
+      {isLoading ? (
+        <div className="flex justify-center py-20">
+          <div className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full" />
+        </div>
+      ) : filtered.length > 0 ? (
+        <div className="card-brutalist p-0 overflow-hidden">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-border bg-white/5">
+                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase">Event</th>
+                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase">Info</th>
+                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((e) => (
+                <tr key={e.id} className="group border-b border-border hover:bg-white/5 transition-colors relative">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-muted-foreground/10 overflow-hidden border border-border">
+                        {e.cover_image ? (
+                          <img src={getMediaUrl(e.cover_image) || ""} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center"><Calendar size={20} className="text-muted-foreground" /></div>
+                        )}
+                      </div>
+                      <span className="font-bold tracking-tight uppercase group-hover:text-accent transition-colors">{e.title}</span>
                     </div>
-                    <h3 className="text-2xl font-bold tracking-tight uppercase group-hover:text-accent transition-colors">
-                      {event.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 max-w-xl">
-                      {event.description}
-                    </p>
-                  </div>
-                  
-                  {event.cover_image && (
-                    <div className="w-32 h-32 bg-muted-foreground/10 border border-border overflow-hidden shrink-0">
-                      <img src={event.cover_image} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                  </td>
+                  <td className="px-6 py-4 space-y-1">
+                    <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground uppercase"><MapPin size={12} /> {e.location}</div>
+                    <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground uppercase"><Calendar size={12} /> {new Date(e.date_time).toLocaleDateString()}</div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <Link href={`/events/${e.id}/edit`} className="p-2 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all">
+                        <Edit size={16} />
+                      </Link>
+                      <button onClick={() => handleDelete(e.id)} className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all">
+                        <Trash2 size={16} />
+                      </button>
                     </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : (
-        <EmptyState 
-          message="NO EVENTS SCHEDULED" 
-          ctaText="＋ CREATE NEW EVENT" 
-          onCtaClick={() => setIsDrawerOpen(true)}
-        />
+        <EmptyState message="NO EVENTS FOUND" ctaText="＋ ADD EVENT" onCtaClick={() => window.location.href = "/events/new"} />
       )}
-
-      <DrawerForm 
-        isOpen={isDrawerOpen} 
-        onClose={() => setIsDrawerOpen(false)}
-        title={selectedEvent ? `EDIT EVENT / ${selectedEvent.title}` : "CREATE NEW EVENT"}
-      >
-        <form id="drawer-form" className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-muted-foreground uppercase">Title</label>
-            <input type="text" className="input-brutalist" defaultValue={selectedEvent?.title} placeholder="EVENT TITLE" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-muted-foreground uppercase">Location</label>
-            <input type="text" className="input-brutalist" defaultValue={selectedEvent?.location} placeholder="CITY / VENUE" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-muted-foreground uppercase">Date & Time</label>
-            <input type="datetime-local" className="input-brutalist" defaultValue={selectedEvent?.date_time} />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-muted-foreground uppercase">Cover Image URL</label>
-            <input type="text" className="input-brutalist" defaultValue={selectedEvent?.cover_image} placeholder="HTTPS://..." />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-muted-foreground uppercase">Description</label>
-            <textarea className="input-brutalist h-32 resize-none" defaultValue={selectedEvent?.description} placeholder="EVENT DETAILS..." />
-          </div>
-        </form>
-      </DrawerForm>
     </div>
   );
 }

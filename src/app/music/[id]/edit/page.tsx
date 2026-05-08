@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Music } from "@/lib/types";
-import { getMusicById } from "@/services/music.service";
+import { getSingleById } from "@/services/singles.service";
 import MusicForm from "@/components/music/MusicForm";
 
 export default function EditMusicPage() {
@@ -14,7 +14,7 @@ export default function EditMusicPage() {
   useEffect(() => {
     const fetchMusic = async () => {
       try {
-        const data = await getMusicById(id as string);
+        const data = await getSingleById(id as string);
         setMusic(data);
       } catch (error) {
         console.error("Failed to fetch music:", error);

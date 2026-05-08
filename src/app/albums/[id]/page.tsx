@@ -6,6 +6,7 @@ import { Album } from "@/lib/types";
 import { getAlbumById } from "@/services/albums.service";
 import { ArrowLeft, Edit, ExternalLink, Disc } from "lucide-react";
 import Link from "next/link";
+import { getMediaUrl } from "@/lib/utils";
 
 export default function AlbumDetailPage() {
   const { id } = useParams();
@@ -36,8 +37,6 @@ export default function AlbumDetailPage() {
 
   if (!album) return <div className="p-20 text-center font-mono uppercase tracking-widest">ALBUM NOT FOUND</div>;
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
   return (
     <div className="space-y-12 stagger-in">
       <div className="flex items-center justify-between">
@@ -64,9 +63,9 @@ export default function AlbumDetailPage() {
           <div className="card-brutalist p-0 aspect-square overflow-hidden">
             {album.cover_image ? (
               <img 
-                src={album.cover_image.startsWith('http') ? album.cover_image : `${API_URL}${album.cover_image}`} 
+                src={getMediaUrl(album.cover_image) || ""} 
                 alt={album.title} 
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
+                className="w-full h-full object-cover transition-all duration-700" 
               />
             ) : (
               <div className="w-full h-full bg-muted-foreground/10 flex items-center justify-center">
@@ -127,7 +126,7 @@ export default function AlbumDetailPage() {
               
               <div className="w-12 h-12 bg-muted-foreground/5 overflow-hidden border border-border flex-shrink-0">
                 {track.cover_image ? (
-                  <img src={track.cover_image.startsWith('http') ? track.cover_image : `${API_URL}${track.cover_image}`} alt="" className="w-full h-full object-cover" />
+                  <img src={getMediaUrl(track.cover_image) || ""} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <Disc size={24} className="m-auto text-muted-foreground/20 h-full" />
                 )}

@@ -62,7 +62,7 @@ export async function uploadAlbumCover(id: string | number, file: File, crop?: C
     formData.append("crop_w", Math.round(crop.width).toString());
     formData.append("crop_h", Math.round(crop.height).toString());
   }
-  await apiFetch<void>(`/albums/${id}/cover`, {
+  await apiFetch<void>(`/albums/${id}/cover-image`, {
     method: "POST",
     body: formData,
   });
@@ -77,7 +77,7 @@ export async function uploadTrackCover(albumId: string | number, trackId: string
     formData.append("crop_w", Math.round(crop.width).toString());
     formData.append("crop_h", Math.round(crop.height).toString());
   }
-  await apiFetch<void>(`/albums/${albumId}/tracks/${trackId}/cover`, {
+  await apiFetch<void>(`/albums/${albumId}/tracks/${trackId}/cover-image`, {
     method: "POST",
     body: formData,
   });

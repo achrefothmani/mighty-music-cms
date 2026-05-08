@@ -9,6 +9,7 @@ import { Trash2, ArrowLeft, Save, Upload, Image as ImageIcon, Plus, X, Disc } fr
 import Link from "next/link";
 import ImageCropper from "@/components/ImageCropper";
 import { PixelCrop } from "react-image-crop";
+import { getMediaUrl } from "@/lib/utils";
 
 interface AlbumFormProps {
   initialData?: Album | null;
@@ -43,9 +44,7 @@ export default function AlbumForm({ initialData }: AlbumFormProps) {
   // Album Image States
   const [albumFile, setAlbumFile] = useState<File | null>(null);
   const [albumPreview, setAlbumPreview] = useState<string | null>(
-    initialData?.cover_image 
-      ? (initialData.cover_image.startsWith('http') ? initialData.cover_image : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${initialData.cover_image}`)
-      : null
+    getMediaUrl(initialData?.cover_image)
   );
   const [albumCrop, setAlbumCrop] = useState<CropCoordinates | null>(null);
 
@@ -57,7 +56,7 @@ export default function AlbumForm({ initialData }: AlbumFormProps) {
       genre: t.genre,
       youtube_link: t.youtube_link || "",
       spotify_link: t.spotify_link || "",
-      preview: t.cover_image ? (t.cover_image.startsWith('http') ? t.cover_image : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${t.cover_image}`) : null
+      preview: getMediaUrl(t.cover_image)
     })) || [{ title: "", genre: "", youtube_link: "", spotify_link: "" }]
   );
 
@@ -227,7 +226,6 @@ export default function AlbumForm({ initialData }: AlbumFormProps) {
           imageSrc={activeCrop.src} 
           onCropComplete={onCropComplete}
           onCancel={() => setActiveCrop(null)}
-          aspect={1}
         />
       )}
 
@@ -368,7 +366,7 @@ export default function AlbumForm({ initialData }: AlbumFormProps) {
                       onClick={() => trackInputRefs.current[index]?.click()}
                     >
                       {track.preview ? (
-                        <img src={track.preview} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                        <img src={track.preview} alt="" className="w-full h-full object-cover transition-all" />
                       ) : (
                         <ImageIcon size={24} className="text-muted-foreground group-hover:text-accent transition-colors" />
                       )}

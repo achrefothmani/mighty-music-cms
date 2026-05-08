@@ -1,7 +1,7 @@
 import { apiFetch } from "@/lib/api";
 import { Music } from "@/lib/types";
 
-export interface MusicPayload {
+export interface SinglePayload {
   title: string;
   genre: string;
   artist_id?: number | null;
@@ -10,30 +10,30 @@ export interface MusicPayload {
   slug?: string;
 }
 
-export async function getMusic(): Promise<Music[]> {
-  return apiFetch<Music[]>("/music/");
+export async function getSingles(): Promise<Music[]> {
+  return apiFetch<Music[]>("/singles/");
 }
 
-export async function getMusicById(id: string | number): Promise<Music> {
-  return apiFetch<Music>(`/music/${id}`);
+export async function getSingleById(id: string | number): Promise<Music> {
+  return apiFetch<Music>(`/singles/${id}`);
 }
 
-export async function createMusic(data: MusicPayload): Promise<Music> {
-  return apiFetch<Music>("/music/", {
+export async function createSingle(data: SinglePayload): Promise<Music> {
+  return apiFetch<Music>("/singles/", {
     method: "POST",
     body: JSON.stringify(data),
   });
 }
 
-export async function updateMusic(id: string | number, data: Partial<MusicPayload>): Promise<Music> {
-  return apiFetch<Music>(`/music/${id}`, {
+export async function updateSingle(id: string | number, data: Partial<SinglePayload>): Promise<Music> {
+  return apiFetch<Music>(`/singles/${id}`, {
     method: "PUT",
     body: JSON.stringify(data),
   });
 }
 
-export async function deleteMusic(id: string | number): Promise<void> {
-  return apiFetch<void>(`/music/${id}`, {
+export async function deleteSingle(id: string | number): Promise<void> {
+  return apiFetch<void>(`/singles/${id}`, {
     method: "DELETE",
   });
 }
@@ -45,7 +45,7 @@ export interface CropCoordinates {
   height: number;
 }
 
-export async function uploadMusicCover(id: string | number, file: File, crop?: CropCoordinates): Promise<void> {
+export async function uploadSingleCover(id: string | number, file: File, crop?: CropCoordinates): Promise<void> {
   const formData = new FormData();
   formData.append("file", file);
   if (crop) {
@@ -54,7 +54,7 @@ export async function uploadMusicCover(id: string | number, file: File, crop?: C
     formData.append("crop_w", Math.round(crop.width).toString());
     formData.append("crop_h", Math.round(crop.height).toString());
   }
-  await apiFetch<void>(`/music/${id}/cover`, {
+  await apiFetch<void>(`/singles/${id}/cover-image`, {
     method: "POST",
     body: formData,
   });

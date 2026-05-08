@@ -1,75 +1,115 @@
 "use client";
 
-import { useState } from "react";
-import { MOCK_PARTNERSHIPS } from "@/lib/mock-data";
+import { useState, useEffect } from "react";
+import { getPartnerships, deletePartnership } from "@/services/partnerships.service";
 import { Partnership } from "@/lib/types";
-import DrawerForm from "@/components/DrawerForm";
 import EmptyState from "@/components/EmptyState";
+import { Search, Trash2, Edit, Plus, Handshake } from "lucide-react";
+import Link from "next/link";
+import { getMediaUrl } from "@/lib/utils";
 
 export default function PartnershipsPage() {
-  const [partnerships, setPartnerships] = useState<Partnership[]>(MOCK_PARTNERSHIPS);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedPartnership, setSelectedPartnership] = useState<Partnership | null>(null);
+  const [partnerships, setPartnerships] = useState<Partnership[]>([]);
+  const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPartnerships();
+  }, []);
+
+  const fetchPartnerships = async () => {
+    try {
+      const data = await getPartnerships();
+      setPartnerships(data);
+    } catch (error) {
+      console.error("Failed to fetch partnerships:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("ARE YOU SURE YOU WANT TO DELETE THIS PARTNERSHIP?")) return;
+    try {
+      await deletePartnership(id);
+      setPartnerships(partnerships.filter(p => p.id !== id));
+    } catch (error) {
+      console.error("Failed to delete partnership:", error);
+    }
+  };
+
+  const filtered = partnerships.filter(p => 
+    p.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="stagger-in space-y-8">
-      {partnerships.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {partnerships.map((item) => (
-            <div 
-              key={item.id} 
-              className="card-brutalist group cursor-pointer hover:border-accent transition-all flex flex-col"
-              onClick={() => {
-                setSelectedPartnership(item);
-                setIsDrawerOpen(true);
-              }}
-            >
-              <div className="aspect-square bg-[#1A1A1A] flex items-center justify-center p-8 overflow-hidden border-b border-border group-hover:border-accent transition-colors">
-                {item.cover_image ? (
-                  <img src={item.cover_image} alt="" className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all" />
-                ) : (
-                  <div className="text-[10px] font-mono text-muted-foreground uppercase">Logo</div>
-                )}
-              </div>
-              <div className="p-6">
-                <h3 className="text-sm font-mono tracking-widest font-bold uppercase group-hover:text-accent transition-colors mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-[10px] text-muted-foreground line-clamp-2 uppercase">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          ))}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+          <input 
+            type="text" 
+            placeholder="SEARCH PARTNERSHIPS..." 
+            className="w-full bg-transparent pl-8 py-2 font-mono text-xs tracking-widest outline-none uppercase placeholder:text-muted-foreground"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <Link 
+          href="/partnerships/new"
+          className="btn-brutalist flex items-center justify-center gap-2 px-6 py-2 bg-accent text-accent-foreground font-mono text-xs tracking-widest hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+        >
+          <Plus size={16} />
+          ADD PARTNERSHIP
+        </Link>
+      </div>
+
+      {isLoading ? (
+        <div className="flex justify-center py-20">
+          <div className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full" />
+        </div>
+      ) : filtered.length > 0 ? (
+        <div className="card-brutalist p-0 overflow-hidden">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-border bg-white/5">
+                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase">Title</th>
+                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((p) => (
+                <tr key={p.id} className="group border-b border-border hover:bg-white/5 transition-colors relative">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-muted-foreground/10 overflow-hidden border border-border">
+                        {p.cover_image ? (
+                          <img src={getMediaUrl(p.cover_image) || ""} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center"><Handshake size={20} className="text-muted-foreground" /></div>
+                        )}
+                      </div>
+                      <span className="font-bold tracking-tight uppercase group-hover:text-accent transition-colors">{p.title}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <Link href={`/partnerships/${p.id}/edit`} className="p-2 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all">
+                        <Edit size={16} />
+                      </Link>
+                      <button onClick={() => handleDelete(p.id)} className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : (
-        <EmptyState 
-          message="NO PARTNERSHIPS FOUND" 
-          ctaText="＋ ADD NEW PARTNER" 
-          onCtaClick={() => setIsDrawerOpen(true)}
-        />
+        <EmptyState message="NO PARTNERSHIPS FOUND" ctaText="＋ ADD PARTNERSHIP" onCtaClick={() => window.location.href = "/partnerships/new"} />
       )}
-
-      <DrawerForm 
-        isOpen={isDrawerOpen} 
-        onClose={() => setIsDrawerOpen(false)}
-        title={selectedPartnership ? `EDIT PARTNER / ${selectedPartnership.title}` : "ADD NEW PARTNER"}
-      >
-        <form id="drawer-form" className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-muted-foreground uppercase">Partner Name</label>
-            <input type="text" className="input-brutalist" defaultValue={selectedPartnership?.title} placeholder="COMPANY NAME" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-muted-foreground uppercase">Logo URL</label>
-            <input type="text" className="input-brutalist" defaultValue={selectedPartnership?.cover_image} placeholder="HTTPS://..." />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-muted-foreground uppercase">Short Description</label>
-            <textarea className="input-brutalist h-24 resize-none" defaultValue={selectedPartnership?.description} placeholder="PARTNERSHIP ROLE..." />
-          </div>
-        </form>
-      </DrawerForm>
     </div>
   );
 }

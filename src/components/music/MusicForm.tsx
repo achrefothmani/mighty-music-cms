@@ -4,11 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Music, Artist } from "@/lib/types";
 import { getArtists } from "@/services/artists.service";
-import { createMusic, updateMusic, deleteMusic, uploadMusicCover, CropCoordinates } from "@/services/music.service";
+import { createSingle, updateSingle, deleteSingle, uploadSingleCover, CropCoordinates } from "@/services/singles.service";
 import { Trash2, ArrowLeft, Save, Upload, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import ImageCropper from "@/components/ImageCropper";
 import { PixelCrop } from "react-image-crop";
+import { getMediaUrl } from "@/lib/utils";
 
 interface MusicFormProps {
   initialData?: Music | null;
@@ -29,9 +30,7 @@ export default function MusicForm({ initialData }: MusicFormProps) {
   // Image States
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(
-    initialData?.cover_image 
-      ? (initialData.cover_image.startsWith('http') ? initialData.cover_image : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${initialData.cover_image}`)
-      : null
+    getMediaUrl(initialData?.cover_image)
   );
 
   // Crop States
@@ -82,7 +81,7 @@ export default function MusicForm({ initialData }: MusicFormProps) {
     
     try {
       setIsSubmitting(true);
-      await deleteMusic(initialData.id);
+      await deleteSingle(initialData.id);
       router.push("/music");
       router.refresh();
     } catch (err) {
@@ -114,16 +113,16 @@ export default function MusicForm({ initialData }: MusicFormProps) {
       setIsSubmitting(true);
       let music: Music;
       if (initialData) {
-        music = await updateMusic(initialData.id, payload);
+        music = await updateSingle(initialData.id, payload);
       } else {
-        music = await createMusic({
+        music = await createSingle({
           ...payload,
           slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
         });
       }
 
       if (coverFile) {
-        await uploadMusicCover(music.id, coverFile, coverCropCoords || undefined);
+        await uploadSingleCover(music.id, coverFile, coverCropCoords || undefined);
       }
 
       router.push("/music");
@@ -143,7 +142,6 @@ export default function MusicForm({ initialData }: MusicFormProps) {
           imageSrc={activeCrop.src} 
           onCropComplete={onCropComplete}
           onCancel={() => setActiveCrop(null)}
-          aspect={1}
         />
       )}
 
@@ -231,7 +229,7 @@ export default function MusicForm({ initialData }: MusicFormProps) {
                 <input type="file" ref={coverInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
                 <div className="border-2 border-dashed border-border aspect-square overflow-hidden bg-muted-foreground/5 relative group cursor-pointer hover:border-accent transition-colors flex items-center justify-center" onClick={() => coverInputRef.current?.click()}>
                   {coverPreview ? (
-                    <img src={coverPreview} alt="Cover" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                    <img src={coverPreview} alt="Cover" className="w-full h-full object-cover transition-all duration-500" />
                   ) : (
                     <div className="flex flex-col items-center gap-4 text-muted-foreground group-hover:text-accent transition-colors">
                       <ImageIcon size={48} strokeWidth={1} />

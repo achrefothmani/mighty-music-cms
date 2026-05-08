@@ -6,6 +6,7 @@ import { Album } from "@/lib/types";
 import EmptyState from "@/components/EmptyState";
 import { Search, Trash2, Edit, Plus, Disc } from "lucide-react";
 import Link from "next/link";
+import { getMediaUrl } from "@/lib/utils";
 
 export default function AlbumsPage() {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -92,7 +93,7 @@ export default function AlbumsPage() {
                       <div className="w-12 h-12 bg-muted-foreground/10 overflow-hidden border border-border">
                         {a.cover_image && (
                           <img 
-                            src={a.cover_image.startsWith('http') ? a.cover_image : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${a.cover_image}`} 
+                            src={getMediaUrl(a.cover_image) || ""} 
                             alt="" 
                             className="w-full h-full object-cover" 
                           />

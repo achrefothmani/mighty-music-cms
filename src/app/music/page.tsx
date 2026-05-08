@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getMusic, deleteMusic } from "@/services/music.service";
+import { getSingles, deleteSingle } from "@/services/singles.service";
 import { Music } from "@/lib/types";
 import EmptyState from "@/components/EmptyState";
 import { Search, ExternalLink, Trash2, Edit, Plus } from "lucide-react";
 import Link from "next/link";
+import { getMediaUrl } from "@/lib/utils";
 
 export default function MusicPage() {
   const [music, setMusic] = useState<Music[]>([]);
@@ -18,7 +19,7 @@ export default function MusicPage() {
 
   const fetchMusic = async () => {
     try {
-      const data = await getMusic();
+      const data = await getSingles();
       setMusic(data);
     } catch (error) {
       console.error("Failed to fetch music:", error);
@@ -30,7 +31,7 @@ export default function MusicPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("ARE YOU SURE YOU WANT TO DELETE THIS TRACK?")) return;
     try {
-      await deleteMusic(id);
+      await deleteSingle(id);
       setMusic(music.filter(m => m.id !== id));
     } catch (error) {
       console.error("Failed to delete music:", error);
@@ -91,7 +92,7 @@ export default function MusicPage() {
                       <div className="w-10 h-10 bg-muted-foreground/10 overflow-hidden border border-border">
                         {m.cover_image && (
                           <img 
-                            src={m.cover_image.startsWith('http') ? m.cover_image : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${m.cover_image}`} 
+                            src={getMediaUrl(m.cover_image) || ""} 
                             alt="" 
                             className="w-full h-full object-cover" 
                           />

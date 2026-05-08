@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import ImageCropper from "@/components/ImageCropper";
 import { PixelCrop } from "react-image-crop";
+import { getMediaUrl } from "@/lib/utils";
 
 // Dynamically import ReactQuill to avoid SSR issues
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -37,14 +38,10 @@ export default function ArtistForm({ initialData }: ArtistFormProps) {
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string | null>(
-    initialData?.profile_image 
-      ? (initialData.profile_image.startsWith('http') ? initialData.profile_image : `/uploads/${initialData.profile_image}`)
-      : null
+    getMediaUrl(initialData?.profile_image)
   );
   const [coverPreview, setCoverPreview] = useState<string | null>(
-    initialData?.cover_image 
-      ? (initialData.cover_image.startsWith('http') ? initialData.cover_image : `/uploads/${initialData.cover_image}`)
-      : null
+    getMediaUrl(initialData?.cover_image)
   );
 
   // Crop States
@@ -337,7 +334,7 @@ export default function ArtistForm({ initialData }: ArtistFormProps) {
                 <input type="file" ref={coverInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'cover')} />
                 <div className="border-2 border-dashed border-border aspect-video overflow-hidden bg-muted-foreground/5 relative group cursor-pointer hover:border-accent transition-colors flex items-center justify-center" onClick={() => coverInputRef.current?.click()}>
                   {coverPreview ? (
-                    <img src={coverPreview} alt="Cover" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                    <img src={coverPreview} alt="Cover" className="w-full h-full object-cover transition-all duration-500" />
                   ) : (
                     <div className="flex flex-col items-center gap-4 text-muted-foreground group-hover:text-accent transition-colors">
                       <ImageIcon size={48} strokeWidth={1} />

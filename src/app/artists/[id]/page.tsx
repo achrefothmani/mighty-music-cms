@@ -80,11 +80,10 @@ export default function ArtistViewPage() {
       <div className="relative h-[40vh] min-h-[300px] border border-border overflow-hidden bg-muted-foreground/5 group">
         {artist.cover_image ? (
           <img 
-            src={coverImg} 
-            alt={artist.full_name} 
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-          />
-        ) : (
+          src={coverImg} 
+          alt={artist.full_name} 
+          className="w-full h-full object-cover transition-all duration-700"
+          />        ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground/20">
             <Music size={120} strokeWidth={0.5} />
           </div>
@@ -95,7 +94,7 @@ export default function ArtistViewPage() {
         <div className="absolute bottom-0 left-0 p-8 md:p-12 flex flex-col md:flex-row items-end gap-8">
           <div className="w-32 h-32 md:w-48 md:h-48 border-4 border-background bg-muted-foreground/10 overflow-hidden shadow-2xl">
             {artist.profile_image ? (
-              <img src={profileImg} alt={artist.full_name} className="w-full h-full object-cover grayscale" />
+              <img src={profileImg} alt={artist.full_name} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-muted-foreground/30">
                 <Users size={48} strokeWidth={1} />
@@ -140,7 +139,7 @@ export default function ArtistViewPage() {
                     <div key={i} className="aspect-video bg-black border border-border group relative overflow-hidden">
                       <iframe 
                         src={`https://www.youtube.com/embed/${videoId}`}
-                        className="w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500"
+                        className="w-full h-full transition-all duration-500"
                         allowFullScreen
                       />
                     </div>

@@ -1,4 +1,16 @@
+export interface CoverItem {
+  url: string;
+  label: string;
+  is_principal: boolean;
+}
+
+export interface GalleryItem {
+  url: string;
+  type: "image" | "video";
+}
+
 export interface Artist {
+  covers?: CoverItem[];
   id: string;
   full_name: string;
   genre: string;
@@ -11,6 +23,7 @@ export interface Artist {
 }
 
 export interface Event {
+  covers?: CoverItem[];
   id: string;
   title: string;
   slug?: string;
@@ -18,9 +31,13 @@ export interface Event {
   date_time: string;
   cover_image?: string;
   description: string;
+  lien_booking?: string;
+  contact?: string[];
+  gallery?: GalleryItem[];
 }
 
 export interface Music {
+  covers?: CoverItem[];
   id: string;
   title: string;
   genre?: string;
@@ -32,6 +49,7 @@ export interface Music {
 }
 
 export interface Track {
+  covers?: CoverItem[];
   id: string;
   album_id: number;
   title: string;
@@ -44,6 +62,7 @@ export interface Track {
 }
 
 export interface Album {
+  covers?: CoverItem[];
   id: string;
   title: string;
   genre: string;
@@ -57,6 +76,7 @@ export interface Album {
 }
 
 export interface News {
+  covers?: CoverItem[];
   id: string;
   title: string;
   description: string;
@@ -64,6 +84,7 @@ export interface News {
 }
 
 export interface Partnership {
+  covers?: CoverItem[];
   id: string;
   title: string;
   description: string;
