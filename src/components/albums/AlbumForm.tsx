@@ -358,7 +358,7 @@ export default function AlbumForm({ initialData }: AlbumFormProps) {
                   <div className="w-full lg:w-32">
                     <input 
                       type="file" 
-                      ref={el => trackInputRefs.current[index] = el} 
+                      ref={el => { trackInputRefs.current[index] = el; }} 
                       className="hidden" 
                       accept="image/*" 
                       onChange={(e) => handleTrackFileChange(e, index)} 
