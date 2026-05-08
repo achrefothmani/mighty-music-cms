@@ -143,7 +143,7 @@ export default function AlbumForm({ initialData }: AlbumFormProps) {
 
   const handleTrackChange = (index: number, field: keyof TrackFormState, value: string) => {
     const newTracks = [...tracks];
-    (newTracks[index] as any)[field] = value;
+    newTracks[index] = { ...newTracks[index], [field]: value };
     setTracks(newTracks);
   };
 
