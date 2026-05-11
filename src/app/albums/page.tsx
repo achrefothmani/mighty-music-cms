@@ -77,7 +77,7 @@ export default function AlbumsPage() {
           columns={[
             { label: "Album" },
             { label: "Artist" },
-            { label: "Year" },
+            { label: "Tracks" },
             { label: "Actions", align: "right" }
           ]}
         >

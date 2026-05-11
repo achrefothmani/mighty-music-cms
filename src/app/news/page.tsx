@@ -73,8 +73,8 @@ export default function NewsPage() {
         <DataTable
           columns={[
             { label: "Title" },
-            { label: "Date" },
-            { label: "Status" },
+            { label: "" },
+            { label: "" },
             { label: "Actions", align: "right" }
           ]}
         >

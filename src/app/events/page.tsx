@@ -74,8 +74,8 @@ export default function EventsPage() {
         <DataTable
           columns={[
             { label: "Event" },
-            { label: "Date" },
-            { label: "Venue" },
+            { label: "Info" },
+            { label: "" },
             { label: "Actions", align: "right" }
           ]}
         >

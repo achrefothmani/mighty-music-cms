@@ -74,9 +74,9 @@ export default function MusicPage() {
       ) : filteredMusic.length > 0 ? (
         <DataTable
           columns={[
-            { label: "Single" },
-            { label: "Artist" },
-            { label: "Released" },
+            { label: "Title" },
+            { label: "Genre" },
+            { label: "Links" },
             { label: "Actions", align: "right" }
           ]}
         >

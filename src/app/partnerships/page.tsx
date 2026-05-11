@@ -72,8 +72,8 @@ export default function PartnershipsPage() {
       ) : filtered.length > 0 ? (
         <DataTable
           columns={[
-            { label: "Partner" },
-            { label: "Category" },
+            { label: "Title" },
+            { label: "" },
             { label: "Actions", align: "right" }
           ]}
         >
