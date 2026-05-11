@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getVideos, deleteVideo } from "@/services/videos.service";
 import { Video } from "@/lib/types";
 import EmptyState from "@/components/EmptyState";
+import { DataTable } from "@/components/ui/DataTable";
 import { Search, ExternalLink, Trash2, Edit, Plus, Video as VideoIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -69,57 +70,52 @@ export default function VideosPage() {
           <div className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full" />
         </div>
       ) : filteredVideos.length > 0 ? (
-        <div className="card-brutalist p-0 overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-border bg-white/5">
-                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase">Title</th>
-                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase">YouTube Link</th>
-                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredVideos.map((v) => (
-                <tr 
-                  key={v.id} 
-                  className="group border-b border-border hover:bg-white/5 transition-colors relative"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-muted-foreground/10 flex items-center justify-center border border-border">
-                        <VideoIcon size={20} className="text-muted-foreground" />
-                      </div>
-                      <span className="font-bold tracking-tight uppercase group-hover:text-accent transition-colors">{v.title}</span>
-                    </div>
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </td>
-                  <td className="px-6 py-4 text-xs font-mono text-muted-foreground truncate max-w-xs">
-                    <a href={v.youtube_link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-accent transition-colors">
-                      {v.youtube_link}
-                      <ExternalLink size={12} />
-                    </a>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Link 
-                        href={`/videos/${v.id}/edit`}
-                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all"
-                      >
-                        <Edit size={16} />
-                      </Link>
-                      <button 
-                        onClick={() => handleDelete(v.id)}
-                        className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable 
+          columns={[
+            { label: "Title" },
+            { label: "YouTube Link" },
+            { label: "Actions", align: "right" }
+          ]}
+        >
+          {filteredVideos.map((v) => (
+            <tr 
+              key={v.id} 
+              className="group border-b border-border hover:bg-white/5 transition-colors relative"
+            >
+              <td className="px-6 py-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-muted-foreground/10 flex items-center justify-center border border-border">
+                    <VideoIcon size={20} className="text-muted-foreground" />
+                  </div>
+                  <span className="font-bold tracking-tight uppercase group-hover:text-accent transition-colors">{v.title}</span>
+                </div>
+                <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent opacity-0 group-hover:opacity-100 transition-opacity" />
+              </td>
+              <td className="px-6 py-4 text-xs font-mono text-muted-foreground truncate max-w-xs">
+                <a href={v.youtube_link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-accent transition-colors">
+                  {v.youtube_link}
+                  <ExternalLink size={12} />
+                </a>
+              </td>
+              <td className="px-6 py-4 text-right">
+                <div className="flex justify-end gap-2">
+                  <Link 
+                    href={`/videos/${v.id}/edit`}
+                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all"
+                  >
+                    <Edit size={16} />
+                  </Link>
+                  <button 
+                    onClick={() => handleDelete(v.id)}
+                    className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </DataTable>
       ) : (
         <EmptyState 
           message="NO VIDEOS FOUND" 
