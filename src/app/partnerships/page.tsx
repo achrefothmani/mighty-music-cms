@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getPartnerships, deletePartnership } from "@/services/partnerships.service";
 import { Partnership } from "@/lib/types";
 import EmptyState from "@/components/EmptyState";
+import { DataTable } from "@/components/ui/DataTable";
 import { Search, Trash2, Edit, Plus, Handshake } from "lucide-react";
 import Link from "next/link";
 import { getMediaUrl } from "@/lib/utils";
@@ -69,44 +70,41 @@ export default function PartnershipsPage() {
           <div className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full" />
         </div>
       ) : filtered.length > 0 ? (
-        <div className="card-brutalist p-0 overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-border bg-white/5">
-                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase">Title</th>
-                <th className="px-6 py-4 text-[10px] font-mono tracking-widest text-muted-foreground uppercase text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((p) => (
-                <tr key={p.id} className="group border-b border-border hover:bg-white/5 transition-colors relative">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-muted-foreground/10 overflow-hidden border border-border">
-                        {p.cover_image ? (
-                          <img src={getMediaUrl(p.cover_image) || ""} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center"><Handshake size={20} className="text-muted-foreground" /></div>
-                        )}
-                      </div>
-                      <span className="font-bold tracking-tight uppercase group-hover:text-accent transition-colors">{p.title}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Link href={`/partnerships/${p.id}/edit`} className="p-2 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all">
-                        <Edit size={16} />
-                      </Link>
-                      <button onClick={() => handleDelete(p.id)} className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={[
+            { label: "Partner" },
+            { label: "Category" },
+            { label: "Actions", align: "right" }
+          ]}
+        >
+          {filtered.map((p) => (
+            <tr key={p.id} className="group border-b border-border hover:bg-white/5 transition-colors relative">
+              <td className="px-6 py-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-muted-foreground/10 overflow-hidden border border-border">
+                    {p.cover_image ? (
+                      <img src={getMediaUrl(p.cover_image) || ""} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center"><Handshake size={20} className="text-muted-foreground" /></div>
+                    )}
+                  </div>
+                  <span className="font-bold tracking-tight uppercase group-hover:text-accent transition-colors">{p.title}</span>
+                </div>
+              </td>
+              <td className="px-6 py-4 text-xs font-mono text-muted-foreground uppercase">-</td>
+              <td className="px-6 py-4 text-right">
+                <div className="flex justify-end gap-2">
+                  <Link href={`/partnerships/${p.id}/edit`} className="p-2 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all">
+                    <Edit size={16} />
+                  </Link>
+                  <button onClick={() => handleDelete(p.id)} className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </DataTable>
       ) : (
         <EmptyState message="NO PARTNERSHIPS FOUND" ctaText="＋ ADD PARTNERSHIP" onCtaClick={() => window.location.href = "/partnerships/new"} />
       )}

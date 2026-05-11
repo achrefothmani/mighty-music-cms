@@ -5,6 +5,7 @@ import { User } from "@/lib/types";
 import { getUsers, createUser, updateUser, deleteUser, UserCreate } from "@/services/users.service";
 import DrawerForm from "@/components/DrawerForm";
 import EmptyState from "@/components/EmptyState";
+import { DataTable } from "@/components/ui/DataTable";
 import { Search, UserPlus, Trash2, Shield, Power, Mail, User as UserIcon, Lock, Save } from "lucide-react";
 
 export default function UsersPage() {
@@ -140,78 +141,73 @@ export default function UsersPage() {
           INITIALIZING USERS...
         </div>
       ) : filteredUsers.length > 0 ? (
-        <div className="card-brutalist p-0 overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-border bg-white/5 text-[10px] font-mono tracking-widest text-muted-foreground uppercase">
-                <th className="px-6 py-4">User</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((u) => (
-                <tr 
-                  key={u.id} 
-                  className="group border-b border-border hover:bg-white/5 transition-colors cursor-pointer"
-                  onClick={() => handleOpenDrawer(u)}
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col">
-                      <span className="font-bold tracking-tight uppercase group-hover:text-accent transition-colors">{u.full_name}</span>
-                      <span className="text-[10px] font-mono text-muted-foreground lowercase">{u.email}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${u.is_active ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-red-500"}`} />
-                      <span className="text-[10px] font-mono uppercase text-muted-foreground">
-                        {u.is_active ? "Active" : "Inactive"}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    {u.is_admin ? (
-                      <span className="text-[10px] font-mono bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 uppercase tracking-tighter">
-                        Admin
-                      </span>
-                    ) : (
-                      <span className="text-[10px] font-mono text-muted-foreground uppercase">
-                        User
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex justify-end gap-2">
-                      <button 
-                        onClick={() => handleToggleActive(u)}
-                        className={`p-2 transition-all ${u.is_active ? "text-muted-foreground hover:text-red-500" : "text-muted-foreground hover:text-green-500"}`}
-                        title={u.is_active ? "Deactivate" : "Activate"}
-                      >
-                        <Power size={14} />
-                      </button>
-                      <button 
-                        onClick={() => handleToggleAdmin(u)}
-                        className={`p-2 transition-all ${u.is_admin ? "text-accent" : "text-muted-foreground hover:text-accent"}`}
-                        title="Toggle Admin"
-                      >
-                        <Shield size={14} />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteUser(u.id)}
-                        className="p-2 text-muted-foreground hover:text-destructive transition-all"
-                        title="Delete"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={[
+            { label: "User" },
+            { label: "Status" },
+            { label: "Role" },
+            { label: "Actions", align: "right" }
+          ]}
+        >
+          {filteredUsers.map((u) => (
+            <tr 
+              key={u.id} 
+              className="group border-b border-border hover:bg-white/5 transition-colors cursor-pointer"
+              onClick={() => handleOpenDrawer(u)}
+            >
+              <td className="px-6 py-4">
+                <div className="flex flex-col">
+                  <span className="font-bold tracking-tight uppercase group-hover:text-accent transition-colors">{u.full_name}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground lowercase">{u.email}</span>
+                </div>
+              </td>
+              <td className="px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${u.is_active ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-red-500"}`} />
+                  <span className="text-[10px] font-mono uppercase text-muted-foreground">
+                    {u.is_active ? "Active" : "Inactive"}
+                  </span>
+                </div>
+              </td>
+              <td className="px-6 py-4">
+                {u.is_admin ? (
+                  <span className="text-[10px] font-mono bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 uppercase tracking-tighter">
+                    Admin
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase">
+                    User
+                  </span>
+                )}
+              </td>
+              <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                <div className="flex justify-end gap-2">
+                  <button 
+                    onClick={() => handleToggleActive(u)}
+                    className={`p-2 transition-all ${u.is_active ? "text-muted-foreground hover:text-red-500" : "text-muted-foreground hover:text-green-500"}`}
+                    title={u.is_active ? "Deactivate" : "Activate"}
+                  >
+                    <Power size={14} />
+                  </button>
+                  <button 
+                    onClick={() => handleToggleAdmin(u)}
+                    className={`p-2 transition-all ${u.is_admin ? "text-accent" : "text-muted-foreground hover:text-accent"}`}
+                    title="Toggle Admin"
+                  >
+                    <Shield size={14} />
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteUser(u.id)}
+                    className="p-2 text-muted-foreground hover:text-destructive transition-all"
+                    title="Delete"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </DataTable>
       ) : (
         <EmptyState 
           message="NO USERS FOUND" 
