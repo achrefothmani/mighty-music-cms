@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
+  BarChart3,
   LayoutDashboard, 
   Mic2, 
   Music, 
@@ -26,6 +27,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const NAV_ITEMS = [
+  { label: "DASHBOARD", href: "/dashboard", icon: BarChart3 },
   { label: "COMMAND CENTER", href: "/", icon: LayoutDashboard },
   { label: "ARTISTS", href: "/artists", icon: Mic2 },
   { label: "SINGLE", href: "/music", icon: Music },
