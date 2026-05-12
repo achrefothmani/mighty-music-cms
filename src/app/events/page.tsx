@@ -75,7 +75,6 @@ export default function EventsPage() {
           columns={[
             { label: "Event" },
             { label: "Info" },
-            { label: "" },
             { label: "Actions", align: "right" }
           ]}
         >
@@ -94,13 +93,13 @@ export default function EventsPage() {
                 </div>
               </td>
               <td className="px-6 py-4">
-                <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground uppercase">
-                  <Calendar size={12} /> {new Date(e.date_time).toLocaleDateString()}
-                </div>
-              </td>
-              <td className="px-6 py-4">
-                <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground uppercase">
-                  <MapPin size={12} /> {e.location}
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground uppercase">
+                    <Calendar size={12} /> {new Date(e.date_time).toLocaleDateString()}
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground uppercase">
+                    <MapPin size={12} /> {e.location}
+                  </div>
                 </div>
               </td>
               <td className="px-6 py-4 text-right">

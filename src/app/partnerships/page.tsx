@@ -73,7 +73,6 @@ export default function PartnershipsPage() {
         <DataTable
           columns={[
             { label: "Title" },
-            { label: "" },
             { label: "Actions", align: "right" }
           ]}
         >
@@ -91,7 +90,6 @@ export default function PartnershipsPage() {
                   <span className="font-bold tracking-tight uppercase group-hover:text-accent transition-colors">{p.title}</span>
                 </div>
               </td>
-              <td className="px-6 py-4 text-xs font-mono text-muted-foreground uppercase">-</td>
               <td className="px-6 py-4 text-right">
                 <div className="flex justify-end gap-2">
                   <Link href={`/partnerships/${p.id}/edit`} className="p-2 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all">
