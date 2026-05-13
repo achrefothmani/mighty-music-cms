@@ -104,3 +104,34 @@ export interface User {
   is_active?: boolean;
   is_admin?: boolean;
 }
+
+export interface AnalyticsSummary {
+  total_views: number;
+  unique_visitors: number;
+  avg_duration: string;
+  bounce_rate: string;
+  total_albums: number;
+  total_singles: number;
+}
+
+export interface GenreDistribution {
+  genre: string;
+  count: number;
+}
+
+export interface ViewOverTime {
+  date: string;
+  views: number;
+}
+
+export interface TopPage {
+  path: string;
+  views: number;
+}
+
+export interface AnalyticsData {
+  summary: AnalyticsSummary;
+  genre_distribution: GenreDistribution[];
+  views_over_time: ViewOverTime[];
+  top_pages: TopPage[];
+}

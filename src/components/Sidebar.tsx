@@ -27,7 +27,6 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const NAV_ITEMS = [
-  { label: "DASHBOARD", href: "/dashboard", icon: BarChart3 },
   { label: "COMMAND CENTER", href: "/", icon: LayoutDashboard },
   { label: "ARTISTS", href: "/artists", icon: Mic2 },
   { label: "SINGLE", href: "/music", icon: Music },
@@ -62,14 +61,14 @@ export default function Sidebar() {
       )}>
         <div className="flex flex-col h-full">
           {/* Logo Area */}
-          <div className="p-8 border-b border-border">
-            <h1 className="text-xl font-bold tracking-[0.2em] text-accent">MIGHTY</h1>
-            <p className="text-[10px] text-muted-foreground tracking-[0.3em] mt-1">EST. 2026</p>
+          <div className="p-6 border-b border-border">
+            <h1 className="text-lg font-bold tracking-[0.2em] text-accent">MIGHTY</h1>
+            <p className="text-[9px] text-muted-foreground tracking-[0.3em] mt-1">EST. 2026</p>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 py-6">
-            <ul className="space-y-1">
+          <nav className="flex-1 py-4">
+            <ul className="space-y-0.5">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -78,11 +77,11 @@ export default function Sidebar() {
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={cn(
-                        "flex items-center gap-4 px-8 py-4 text-xs font-mono tracking-widest transition-all hover:bg-card hover:text-accent group",
+                        "flex items-center gap-3 px-6 py-3 text-[10px] font-mono tracking-wider transition-all hover:bg-card hover:text-accent group",
                         isActive ? "text-foreground border-l-2 border-accent bg-card" : "text-muted-foreground"
                       )}
                     >
-                      <item.icon size={18} className={cn(
+                      <item.icon size={16} className={cn(
                         "group-hover:text-accent transition-colors",
                         isActive ? "text-accent" : "text-muted-foreground"
                       )} />
@@ -95,17 +94,17 @@ export default function Sidebar() {
           </nav>
 
           {/* Footer Area */}
-          <div className="p-8 border-t border-border">
+          <div className="p-6 border-t border-border">
             <button 
               onClick={() => logout()}
               className="flex items-center gap-3 w-full group hover:text-accent transition-colors"
             >
-              <div className="w-8 h-8 bg-accent flex items-center justify-center text-[10px] font-mono text-white">AD</div>
-              <div className="text-left">
-                <p className="text-[10px] font-mono uppercase">Admin User</p>
+              <div className="w-7 h-7 bg-accent flex items-center justify-center text-[9px] font-mono text-white">AD</div>
+              <div className="text-left overflow-hidden">
+                <p className="text-[10px] font-mono uppercase truncate">Admin User</p>
                 <div className="flex items-center gap-1">
-                  <p className="text-[8px] text-muted-foreground uppercase group-hover:text-accent transition-colors">Logout</p>
-                  <LogOut size={10} className="text-muted-foreground group-hover:text-accent transition-colors" />
+                  <p className="text-[9px] text-muted-foreground uppercase group-hover:text-accent transition-colors">Logout</p>
+                  <LogOut size={9} className="text-muted-foreground group-hover:text-accent transition-colors" />
                 </div>
               </div>
             </button>
