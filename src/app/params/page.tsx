@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { getConfig, updateConfig } from "@/services/config.service";
 import { RefreshCw, Save, Type, Palette, Share2, ToggleLeft, CheckCircle2, AlertCircle } from "lucide-react";
+import { SiteConfig } from "@/lib/types";
 
 export default function ParamsPage() {
-  const [config, setConfig] = useState<any>(null);
+  const [config, setConfig] = useState<SiteConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
@@ -13,6 +14,29 @@ export default function ParamsPage() {
   useEffect(() => {
     fetchConfig();
   }, []);
+
+  useEffect(() => {
+    if (!config) return;
+    
+    const validWeights = ['100', '200', '300', '400', '500', '600', '700', '800', '900'];
+    const families = Object.values(config.typography).map((t: any) => {
+      const family = t.font.replace(/ /g, '+');
+      const weight = validWeights.includes(t.weight.toString()) ? `:wght@${t.weight}` : '';
+      return `family=${family}${weight}`;
+    });
+    
+    const url = `https://fonts.googleapis.com/css2?${families.join('&')}&display=swap`;
+    
+    const linkId = 'dynamic-google-fonts';
+    let link = document.getElementById(linkId) as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement('link');
+      link.id = linkId;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    link.href = url;
+  }, [config?.typography]);
 
   const fetchConfig = async () => {
     setIsLoading(true);
@@ -27,6 +51,7 @@ export default function ParamsPage() {
   };
 
   const handleSave = async () => {
+    if (!config) return;
     setIsSaving(true);
     setStatus(null);
     try {
@@ -42,7 +67,7 @@ export default function ParamsPage() {
     }
   };
 
-  const updateNestedField = (section: string, field: string, value: any) => {
+  const updateNestedField = (section: keyof SiteConfig, field: string, value: any) => {
     setConfig((prev: any) => ({
       ...prev,
       [section]: {
@@ -116,39 +141,41 @@ export default function ParamsPage() {
             {['h1', 'h2', 'p'].map((tag) => (
               <div key={tag} className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-mono uppercase text-accent font-bold">{tag.toUpperCase()} Settings</span>
+                  <span 
+                    className="text-[10px] font-mono uppercase text-accent font-bold"
+                    style={{ 
+                      fontFamily: (config.typography as any)[tag].font,
+                      fontWeight: (config.typography as any)[tag].weight
+                    }}
+                  >
+                    {tag.toUpperCase()} Settings
+                  </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-1">
                     <label className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest">Font Family</label>
                     <input 
                       type="text" 
-                      value={config.typography[tag].font} 
+                      value={(config.typography as any)[tag].font} 
                       onChange={(e) => updateTypography(tag, 'font', e.target.value)}
                       className="w-full bg-background border border-border p-2 text-[10px] font-mono uppercase focus:border-accent outline-none"
                     />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest">Weight</label>
-                    <select 
-                      value={config.typography[tag].weight} 
+                    <input 
+                      type="text"
+                      value={(config.typography as any)[tag].weight} 
                       onChange={(e) => updateTypography(tag, 'weight', e.target.value)}
+                      placeholder="e.g. 400, 700"
                       className="w-full bg-background border border-border p-2 text-[10px] font-mono uppercase focus:border-accent outline-none"
-                    >
-                      <option value="300">Light (300)</option>
-                      <option value="400">Regular (400)</option>
-                      <option value="500">Medium (500)</option>
-                      <option value="600">Semi Bold (600)</option>
-                      <option value="700">Bold (700)</option>
-                      <option value="800">Extra Bold (800)</option>
-                      <option value="900">Black (900)</option>
-                    </select>
+                    />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest">Size</label>
                     <input 
                       type="text" 
-                      value={config.typography[tag].size} 
+                      value={(config.typography as any)[tag].size} 
                       onChange={(e) => updateTypography(tag, 'size', e.target.value)}
                       className="w-full bg-background border border-border p-2 text-[10px] font-mono uppercase focus:border-accent outline-none"
                     />
@@ -158,9 +185,9 @@ export default function ParamsPage() {
                 <div className="p-4 border border-dashed border-border mt-2 bg-card">
                   <label className="text-[8px] font-mono text-muted-foreground uppercase mb-2 block tracking-widest">Live Preview</label>
                   <div style={{ 
-                    fontFamily: config.typography[tag].font, 
-                    fontWeight: config.typography[tag].weight,
-                    fontSize: config.typography[tag].size
+                    fontFamily: (config.typography as any)[tag].font, 
+                    fontWeight: (config.typography as any)[tag].weight,
+                    fontSize: (config.typography as any)[tag].size
                   }}>
                     The quick brown fox jumps over the lazy dog.
                   </div>
@@ -226,8 +253,8 @@ export default function ParamsPage() {
                   <label className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest block">{platform}</label>
                   <input 
                     type="text" 
-                    value={config.socials[platform]} 
-                    onChange={(e) => updateNestedField('socials', platform, e.target.value)}
+                    value={(config.socials as any)[platform]} 
+                    onChange={(e) => updateNestedField('socials' as any, platform, e.target.value)}
                     placeholder={`https://${platform}.com/yourprofile`}
                     className="w-full bg-background border border-border p-2 text-[10px] font-mono focus:border-accent outline-none"
                   />
@@ -236,25 +263,7 @@ export default function ParamsPage() {
             </div>
           </div>
 
-          <div className="card-brutalist">
-            <div className="flex items-center gap-3 mb-6">
-              <ToggleLeft size={16} className="text-accent" />
-              <h3 className="text-[10px] font-mono tracking-[0.2em] text-muted-foreground uppercase">System Modules</h3>
-            </div>
-            <div className="space-y-4">
-              {Object.keys(config.features).map(feature => (
-                <div key={feature} className="flex items-center justify-between p-3 border border-border hover:bg-card transition-colors">
-                  <span className="text-[10px] font-mono uppercase tracking-widest">{feature.replace('show_', '').replace('_', ' ')}</span>
-                  <button 
-                    onClick={() => updateNestedField('features', feature, !config.features[feature])}
-                    className={`w-12 h-6 flex items-center p-1 transition-colors ${config.features[feature] ? 'bg-accent' : 'bg-muted'}`}
-                  >
-                    <div className={`w-4 h-4 bg-white transition-transform ${config.features[feature] ? 'translate-x-6' : 'translate-x-0'}`} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+
         </div>
       </div>
     </div>

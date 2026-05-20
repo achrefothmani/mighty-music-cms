@@ -44,7 +44,7 @@ export default function AlbumForm({ initialData }: AlbumFormProps) {
   // Album Image States
   const [albumFile, setAlbumFile] = useState<File | null>(null);
   const [albumPreview, setAlbumPreview] = useState<string | null>(
-    getMediaUrl(initialData?.cover_image)
+    getMediaUrl(initialData?.original_cover_image || initialData?.cover_image)
   );
   const [albumCrop, setAlbumCrop] = useState<CropCoordinates | null>(null);
 
@@ -56,7 +56,7 @@ export default function AlbumForm({ initialData }: AlbumFormProps) {
       genre: t.genre,
       youtube_link: t.youtube_link || "",
       spotify_link: t.spotify_link || "",
-      preview: getMediaUrl(t.cover_image)
+      preview: getMediaUrl(t.original_cover_image || t.cover_image)
     })) || [{ title: "", genre: "", youtube_link: "", spotify_link: "" }]
   );
 

@@ -16,20 +16,32 @@ export function formatDate(dateString: string) {
 
 export function getMediaUrl(path?: string | null) {
   if (!path) return null;
-  if (path.startsWith('http')) return path;
+  
+  // Handle tuple-like string if it somehow still exists (backward compatibility)
+  let actualPath = path;
+  if (typeof path === 'string' && path.startsWith("(") && path.endsWith(")")) {
+    const parts = path.substring(1, path.length - 1).split(",");
+    if (parts.length > 0) {
+      actualPath = parts[0].trim().replace(/^['"]|['"]$/g, '');
+    }
+  }
+
+  if (actualPath.startsWith('http')) return actualPath;
   
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  const cleanPath = actualPath.startsWith('/') ? actualPath.slice(1) : actualPath;
   
-  // If the path starts with events/ but NOT events/gallery/, it's a cover
-  // and according to user it should be under /uploads/events/
-  if (cleanPath.startsWith('events/') && !cleanPath.startsWith('events/gallery/')) {
+  // If the path starts with specific folders but NOT gallery/, it's a cover
+  const topFolders = ["events", "news", "artists", "partnerships", "singles", "albums", "tracks", "music"];
+  const isTopFolder = topFolders.some(folder => cleanPath.startsWith(`${folder}/`) && !cleanPath.startsWith(`${folder}/gallery/`));
+
+  if (isTopFolder) {
     return `${cleanBaseUrl}/uploads/${cleanPath}`;
   }
   
-  // If the path already starts with events/gallery/ or uploads/, just append it to base
-  if (cleanPath.startsWith('events/gallery/') || cleanPath.startsWith('uploads/')) {
+  // If the path already starts with gallery/ or uploads/, just append it to base
+  if (cleanPath.includes('/gallery/') || cleanPath.startsWith('uploads/')) {
     return `${cleanBaseUrl}/${cleanPath}`;
   }
   

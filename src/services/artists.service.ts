@@ -64,6 +64,7 @@ export async function uploadArtistProfileImage(id: string | number, file: File, 
 export async function uploadArtistCoverImage(id: string | number, file: File, crop?: CropCoordinates): Promise<Artist> {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("is_principal", "true");
   if (crop) {
     formData.append("crop_x", Math.round(crop.x).toString());
     formData.append("crop_y", Math.round(crop.y).toString());

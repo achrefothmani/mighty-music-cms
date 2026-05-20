@@ -27,7 +27,7 @@ export default function NewsForm({ initialData }: NewsFormProps) {
   const [description, setDescription] = useState(initialData?.description || "");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(
-    getMediaUrl(initialData?.cover_image)
+    getMediaUrl(initialData?.original_image || initialData?.cover_image)
   );
   const [activeCrop, setActiveCrop] = useState<{ src: string } | null>(null);
   const [coverCropCoords, setCoverCropCoords] = useState<CropCoordinates | null>(null);

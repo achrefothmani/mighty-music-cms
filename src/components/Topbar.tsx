@@ -19,8 +19,8 @@ export default function Topbar() {
     const segments = pathname.split("/");
     const section = segments[1];
     
-    // Don't show NEW button if already on a new or edit page
-    if (pathname === "/" || segments.length > 2) return null;
+    // Don't show NEW button if already on a new or edit page or for params
+    if (pathname === "/" || segments.length > 2 || section === "params") return null;
     
     return {
       text: `＋ NEW ${section.slice(0, -1).toUpperCase()}`,

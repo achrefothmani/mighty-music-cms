@@ -41,7 +41,7 @@ export async function deleteEvent(id: string | number): Promise<void> {
   });
 }
 
-export async function uploadEventCover(id: string | number, file: File, label: string = "Hero cover", isPrincipal: boolean = false, crop?: CropCoordinates): Promise<Event> {
+export async function uploadEventCover(id: string | number, file: File, label: string = "Hero cover", isPrincipal: boolean = true, crop?: CropCoordinates): Promise<Event> {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("label", label);

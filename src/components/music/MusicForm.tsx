@@ -30,7 +30,7 @@ export default function MusicForm({ initialData }: MusicFormProps) {
   // Image States
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(
-    getMediaUrl(initialData?.cover_image)
+    getMediaUrl(initialData?.original_cover_image || initialData?.cover_image)
   );
 
   // Crop States

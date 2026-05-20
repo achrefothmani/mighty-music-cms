@@ -38,10 +38,10 @@ export default function ArtistForm({ initialData }: ArtistFormProps) {
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string | null>(
-    getMediaUrl(initialData?.profile_image)
+    getMediaUrl(initialData?.original_profile_image || initialData?.profile_image)
   );
   const [coverPreview, setCoverPreview] = useState<string | null>(
-    getMediaUrl(initialData?.cover_image)
+    getMediaUrl(initialData?.original_cover_image || initialData?.cover_image)
   );
 
   // Crop States

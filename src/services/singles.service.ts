@@ -48,6 +48,7 @@ export interface CropCoordinates {
 export async function uploadSingleCover(id: string | number, file: File, crop?: CropCoordinates): Promise<void> {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("is_principal", "true");
   if (crop) {
     formData.append("crop_x", Math.round(crop.x).toString());
     formData.append("crop_y", Math.round(crop.y).toString());

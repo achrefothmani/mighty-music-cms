@@ -326,7 +326,7 @@ export default function EventForm({ initialData }: EventFormProps) {
                     <div key={i} className="flex gap-4 p-4 border border-border bg-muted-foreground/5 relative">
                       <div className="w-24 h-24 border border-border overflow-hidden bg-black flex-shrink-0">
                         <img 
-                          src={item.isPending ? (item as PendingCover).preview : (getMediaUrl((item as CoverItem).url) || "")} 
+                          src={item.isPending ? (item as PendingCover).preview : (getMediaUrl((item as CoverItem).original_url || (item as CoverItem).url) || "")} 
                           alt="" 
                           className="w-full h-full object-cover" 
                         />
@@ -395,7 +395,7 @@ export default function EventForm({ initialData }: EventFormProps) {
                         </div>
                       ) : (
                         <img 
-                          src={item.isPending ? (item as PendingGalleryItem).preview : (getMediaUrl((item as GalleryItem).url) || "")} 
+                          src={item.isPending ? (item as PendingGalleryItem).preview : (getMediaUrl((item as GalleryItem).original_url || (item as GalleryItem).url) || "")} 
                           alt="" 
                           className="w-full h-full object-cover" 
                         />

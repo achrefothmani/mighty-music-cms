@@ -1,4 +1,13 @@
-import api from "./api";
+import { apiFetch } from "../lib/api";
+import { SiteConfig } from "@/lib/types";
 
-export const getConfig = () => api.get("/config").then(res => res.data);
-export const updateConfig = (data: any) => api.patch("/config", data).then(res => res.data);
+export async function getConfig(): Promise<SiteConfig> {
+  return apiFetch<SiteConfig>("/config/");
+}
+
+export async function updateConfig(data: Partial<SiteConfig>): Promise<SiteConfig> {
+  return apiFetch<SiteConfig>("/config/", {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+}

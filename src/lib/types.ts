@@ -1,11 +1,13 @@
 export interface CoverItem {
   url: string;
+  original_url?: string;
   label: string;
   is_principal: boolean;
 }
 
 export interface GalleryItem {
   url: string;
+  original_url?: string;
   type: "image" | "video";
 }
 
@@ -15,7 +17,9 @@ export interface Artist {
   full_name: string;
   genre: string;
   profile_image?: string;
+  original_profile_image?: string;
   cover_image?: string;
+  original_cover_image?: string;
   slug?: string;
   bio?: string;
   spotify_playlist_link?: string;
@@ -30,6 +34,7 @@ export interface Event {
   location: string;
   date_time: string;
   cover_image?: string;
+  original_image?: string;
   description: string;
   lien_booking?: string;
   contact?: string[];
@@ -43,6 +48,7 @@ export interface Music {
   genre?: string;
   slug?: string;
   cover_image?: string;
+  original_cover_image?: string;
   youtube_link?: string;
   spotify_link?: string;
   artist_id?: number;
@@ -56,6 +62,7 @@ export interface Track {
   genre: string;
   slug?: string;
   cover_image?: string;
+  original_cover_image?: string;
   youtube_link?: string;
   spotify_link?: string;
   track_number: number;
@@ -68,6 +75,7 @@ export interface Album {
   genre: string;
   slug?: string;
   cover_image?: string;
+  original_cover_image?: string;
   youtube_link?: string;
   spotify_link?: string;
   artist_id?: number;
@@ -81,6 +89,7 @@ export interface News {
   title: string;
   description: string;
   cover_image?: string;
+  original_image?: string;
 }
 
 export interface Partnership {
@@ -89,6 +98,7 @@ export interface Partnership {
   title: string;
   description: string;
   cover_image?: string;
+  original_image?: string;
 }
 
 export interface Video {
@@ -134,4 +144,28 @@ export interface AnalyticsData {
   genre_distribution: GenreDistribution[];
   views_over_time: ViewOverTime[];
   top_pages: TopPage[];
+}
+
+export interface TypographyItem {
+  font: string;
+  weight: string;
+  size: string;
+}
+
+export interface SiteConfig {
+  id: number;
+  typography: {
+    [key: string]: TypographyItem;
+  };
+  branding: {
+    primary_color: string;
+    accent_color: string;
+    logo_url?: string | null;
+  };
+  socials: {
+    [key: string]: string;
+  };
+  features: {
+    [key: string]: boolean;
+  };
 }
