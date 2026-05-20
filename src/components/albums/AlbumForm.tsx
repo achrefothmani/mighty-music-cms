@@ -177,6 +177,7 @@ export default function AlbumForm({ initialData }: AlbumFormProps) {
       spotify_link: formData.get("spotify_link") as string,
       youtube_link: formData.get("youtube_link") as string,
       tracks: tracks.map(t => ({
+        ...(t.id ? { id: Number(t.id) } : {}),
         title: t.title,
         genre: t.genre || (formData.get("genre") as string),
         youtube_link: t.youtube_link,

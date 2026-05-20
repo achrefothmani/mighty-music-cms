@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api";
 import { Album } from "@/lib/types";
 
 export interface TrackPayload {
+  id?: number;
   title: string;
   genre: string;
   youtube_link?: string;

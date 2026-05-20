@@ -138,7 +138,7 @@ export default function ParamsPage() {
           </div>
           
           <div className="space-y-8">
-            {['h1', 'h2', 'p'].map((tag) => (
+            {['h1', 'h2', 'p', 'a'].map((tag) => (
               <div key={tag} className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span 
