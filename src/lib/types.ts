@@ -169,3 +169,13 @@ export interface SiteConfig {
     [key: string]: boolean;
   };
 }
+
+export interface AboutPage {
+  id: number;
+  title: string;
+  subtitle: string;
+  description: string | null;
+  cover_image: string | null;
+  original_image: string | null;
+  gallery: string[];
+}

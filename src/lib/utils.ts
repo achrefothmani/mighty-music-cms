@@ -33,15 +33,15 @@ export function getMediaUrl(path?: string | null) {
   const cleanPath = actualPath.startsWith('/') ? actualPath.slice(1) : actualPath;
   
   // If the path starts with specific folders but NOT gallery/, it's a cover
-  const topFolders = ["events", "news", "artists", "partnerships", "singles", "albums", "tracks", "music"];
+  const topFolders = ["events", "news", "artists", "partnerships", "singles", "albums", "tracks", "music", "about"];
   const isTopFolder = topFolders.some(folder => cleanPath.startsWith(`${folder}/`) && !cleanPath.startsWith(`${folder}/gallery/`));
 
   if (isTopFolder) {
     return `${cleanBaseUrl}/uploads/${cleanPath}`;
   }
   
-  // If the path already starts with gallery/ or uploads/, just append it to base
-  if (cleanPath.includes('/gallery/') || cleanPath.startsWith('uploads/')) {
+  // If the path already starts with gallery/ (except about/gallery) or uploads/, just append it to base
+  if ((cleanPath.includes('/gallery/') && !cleanPath.startsWith('about/')) || cleanPath.startsWith('uploads/')) {
     return `${cleanBaseUrl}/${cleanPath}`;
   }
   

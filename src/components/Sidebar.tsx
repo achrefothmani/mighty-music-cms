@@ -15,7 +15,8 @@ import {
   Users,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Info
 } from "lucide-react";
 import { useState } from "react";
 import { clsx, type ClassValue } from "clsx";
@@ -35,6 +36,7 @@ const NAV_ITEMS = [
   { label: "VIDEOS", href: "/videos", icon: Video },
   { label: "NEWS", href: "/news", icon: Newspaper },
   { label: "PARTNERSHIPS", href: "/partnerships", icon: Handshake },
+  { label: "ABOUT", href: "/about", icon: Info },
   { label: "USERS", href: "/users", icon: Users },
   { label: "PARAMS", href: "/params", icon: BarChart3 },
 ];
