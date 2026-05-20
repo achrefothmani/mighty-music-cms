@@ -36,6 +36,7 @@ const NAV_ITEMS = [
   { label: "NEWS", href: "/news", icon: Newspaper },
   { label: "PARTNERSHIPS", href: "/partnerships", icon: Handshake },
   { label: "USERS", href: "/users", icon: Users },
+  { label: "PARAMS", href: "/params", icon: BarChart3 },
 ];
 
 export default function Sidebar() {
