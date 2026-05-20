@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { X, Check, RotateCcw } from "lucide-react";
@@ -15,9 +15,11 @@ interface ImageCropperProps {
 export default function ImageCropper({ imageSrc, aspect, onCropComplete, onCancel }: ImageCropperProps) {
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const imgRef = useRef<HTMLImageElement | null>(null);
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
+    imgRef.current = e.currentTarget;
     const initialCrop = centerCrop(
       {
         unit: "%",
@@ -28,6 +30,21 @@ export default function ImageCropper({ imageSrc, aspect, onCropComplete, onCance
       height
     );
     setCrop(initialCrop);
+  };
+
+  const handleApply = () => {
+    if (!completedCrop || !imgRef.current) return;
+    const img = imgRef.current;
+    const scaleX = img.naturalWidth / img.width;
+    const scaleY = img.naturalHeight / img.height;
+    const scaled: PixelCrop = {
+      unit: "px",
+      x: Math.round(completedCrop.x * scaleX),
+      y: Math.round(completedCrop.y * scaleY),
+      width: Math.round(completedCrop.width * scaleX),
+      height: Math.round(completedCrop.height * scaleY),
+    };
+    onCropComplete(scaled);
   };
 
   return (
@@ -73,7 +90,7 @@ export default function ImageCropper({ imageSrc, aspect, onCropComplete, onCance
         {/* Footer */}
         <div className="p-6 border-t border-border flex justify-end gap-4">
           <button
-            onClick={() => completedCrop && onCropComplete(completedCrop)}
+            onClick={handleApply}
             disabled={!completedCrop}
             className="btn-primary flex items-center gap-3 px-8 py-3 disabled:opacity-50"
           >
